@@ -24,7 +24,7 @@ const CLEAN = (findings = []) => ({
 const cases = [
   { name: '01 all lanes clean, one MEDIUM open', ...CLEAN([finding('PREFLIGHT-01', 'exposure', '/.git/HEAD', 'MEDIUM', 'open', 'none')]), want: 0, wantRules: [] },
   { name: '02 app lane untested, no reason recorded', lanes: [lane('exposure', 'PASS'), lane('app-tests', 'untested'), lane('perf', 'measured')], findings: [], want: 1, wantRules: ['R1'] },
-  { name: '03 app lane de-scoped by the user', lanes: [lane('exposure', 'PASS'), lane('app-tests', 'untested', { descope: 'user:no isolated environment' }), lane('perf', 'measured')], findings: [], want: 0, wantRules: [] },
+  { name: '03 app lane de-scoped by the user', lanes: [lane('exposure', 'PASS'), lane('app-tests', 'untested', { descope: 'user:no isolated environment' }), lane('perf', 'measured')], findings: [], want: 1, wantRules: ['R1'] },
   { name: '04 exposure INCONCLUSIVE', lanes: [lane('exposure', 'INCONCLUSIVE'), lane('app-tests', 'ready', { checker: '0' }), lane('perf', 'measured')], findings: [], want: 1, wantRules: ['R1'] },
   { name: '05 HIGH fixed-unproven', ...CLEAN([finding('PREFLIGHT-02', 'exposure', '/assets/app.js.map', 'HIGH', 'fixed-unproven', 'none')]), want: 1, wantRules: ['R2'] },
   { name: '06 HIGH fixed-verified', ...CLEAN([finding('PREFLIGHT-02', 'exposure', '/assets/app.js.map', 'HIGH', 'fixed-verified', 'none')]), want: 0, wantRules: [] },
@@ -42,6 +42,7 @@ const cases = [
   { name: '18 wrong header', lanes: ['lane\ttarget\tverdict\tsha\trecorded_at\tchecker_exit\tdescoped_by\tnotes', ...[]], findings: [], want: 2, wantRules: [] },
   { name: '19 MEDIUM fixed-unproven does not block', ...CLEAN([finding('PERF-03', 'perf', '/pricing', 'MEDIUM', 'fixed-unproven', 'none')]), want: 0, wantRules: [] },
   { name: '20 perf lane not-measured, no findings', lanes: [lane('exposure', 'PASS'), lane('app-tests', 'ready', { checker: '0' }), lane('perf', 'not-measured', { notes: 'no page to lighthous' })], findings: [], want: 0, wantRules: [] },
+  { name: '21 app lane not-applicable with profile in notes', lanes: [lane('exposure', 'PASS'), lane('app-tests', 'not-applicable', { notes: 'static-site: no user-facing forms or auth' }), lane('perf', 'measured')], findings: [], want: 0, wantRules: [] },
 ];
 
 const root = mkdtempSync(join(tmpdir(), 'release-gate-fixtures-'));

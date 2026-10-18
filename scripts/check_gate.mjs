@@ -9,6 +9,11 @@ const FINDING_COLS = ['id', 'lane', 'route', 'severity', 'remediation', 'evidenc
 
 const LANE_NAMES = ['exposure', 'app-tests', 'perf'];
 const BLOCKING = ['BLOCK', 'INCONCLUSIVE', 'HOLD', 'fail', 'untested'];
+const VERDICTS = {
+  exposure: ['PASS', 'PASS WITH FIXES', 'BLOCK', 'INCONCLUSIVE', 'HOLD', 'fail', 'untested'],
+  'app-tests': ['ready', 'not-ready', 'BLOCK', 'INCONCLUSIVE', 'HOLD', 'fail', 'untested', 'not-applicable'],
+  perf: ['measured', 'not-measured', 'BLOCK', 'INCONCLUSIVE', 'HOLD', 'fail', 'untested'],
+};
 const SEVERITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 const REMEDIATIONS = ['open', 'fixed-verified', 'fixed-unproven', 'accepted-risk'];
 const TOUCHES = ['data', 'money', 'role', 'none', 'unknown'];
@@ -49,6 +54,10 @@ function validateLanes(rows) {
   for (const r of rows) {
     if (!LANE_NAMES.includes(r.lane)) breakContract(`unknown lane "${r.lane}" (expected ${LANE_NAMES.join('|')})`);
     if (!r.verdict) breakContract(`lane ${r.lane} has no verdict; record one, or "untested"`);
+    const allowed = VERDICTS[r.lane];
+    if (allowed && !allowed.includes(r.verdict)) {
+      breakContract(`lane ${r.lane} verdict "${r.verdict}" is not in the recognised set: ${allowed.join(', ')}`);
+    }
     if (r.checker_exit !== '-' && !/^-?\d+$/.test(r.checker_exit)) {
       breakContract(`lane ${r.lane} checker_exit "${r.checker_exit}" is not an integer or "-"`);
     }
@@ -86,12 +95,21 @@ export function evaluate({ lanes, findings, currentSha }) {
     const descoped = cell(lane.descoped_by);
     if (descoped) {
       gaps.push(`lane=${lane.lane} target=${lane.target} de-scoped by ${descoped}`);
-      continue;
+      // fall through: descoped lanes still contribute to R1/R5, they are annotations not exemptions
     }
+
+    // not-applicable clears a lane only when mechanically validated
+    if (lane.verdict === 'not-applicable') {
+      const notes = cell(lane.notes);
+      if (!notes) breakContract(`lane ${lane.lane} is marked not-applicable but has no notes explaining why`);
+      continue; // skips R1/R3/R6 for this lane
+    }
+
     if (BLOCKING.includes(lane.verdict)) {
       fire('R1', `lane ${lane.lane} (${lane.target}) verdict ${lane.verdict} — an unassessed lane is not a passed lane`);
     }
-    if (lane.lane === 'app-tests') {
+    if (lane.lane === 'app-tests' && !BLOCKING.includes(lane.verdict)) {
+      // Skip R3 when the verdict already explains why there's no checker run
       if (lane.checker_exit === '-') fire('R3', 'app-tests lane ran without check_results.mjs — prose is not mechanical evidence');
       else if (Number(lane.checker_exit) !== 0) fire('R3', `app-tests check_results.mjs exited ${lane.checker_exit}`);
     }
