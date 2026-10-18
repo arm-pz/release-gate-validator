@@ -1,0 +1,9 @@
+{
+  "name": "release-gate-validator",
+  "version": "0.1.0",
+  "description": "Turns three pre-launch reports that already exist into one release posture (HOLD or ready) without running any of them. Parses the red team's results table mechanically and keeps every lane's verdict separate.",
+  "author": {
+    "name": "Abdul Rahman P Z"
+  },
+  "repository": "https://github.com/arm-pz/release-gate-validator"
+}
