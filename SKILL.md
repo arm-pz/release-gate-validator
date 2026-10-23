@@ -4,16 +4,17 @@ description: >-
   Turns three pre-launch reports that already exist into one release posture (HOLD or ready)
   without running any of them. Ingests the security red team's on-disk results table
   mechanically, takes the preflight and performance tables as verbatim pastes, and computes the
-  posture with a script. Use when the lanes were run earlier or by someone else, when a deploy
-  decision is needed now and re-running three skills is not affordable, or when asked "is this
-  safe to launch", "ready to ship", "give me a go/no-go". Runs no attacks, no probes, no
+  posture with a script. Use when the lanes were run earlier or by someone else, or when a
+  deploy decision is needed now from those reports and re-running three skills is not
+  affordable. Runs no attacks, no probes, no
   measurements, no subagents. A lane's pass never covers another lane, and an absent lane is
-  reported absent. Not for producing the reports in the first place, and not for deploying.
+  reported absent. Not for producing the reports in the first place (use release-gate-chair),
+  and not for deploying.
 argument-hint: <red-team-run-dir> [production URL] [--report <path>]
 version: 0.1.0
 ---
 
-# Release gate (validator variant)
+# Release gate validator
 
 This fork **judges, it does not test.** Nothing here touches a target. It reads reports that
 already exist, puts them in one ledger, and applies the same deterministic posture rule the other
