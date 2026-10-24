@@ -93,7 +93,7 @@ plainly that no lane was re-run here and name the run dates. Then recommend the 
 - Merge verdicts into a score, or let one lane's pass cover another's absence.
 - Present itself as equivalent to the other two forks. It is the cheapest and the least fresh.
 
-Read `caffeinity-stack` before reporting Caffeinity work. W3 in `caffeinity-routing` is the sequence
+If a `caffeinity-stack` skill is installed, read it before reporting Caffeinity work. W3 in `caffeinity-routing` is the sequence
 this skill validates.
 
 ## Verify
