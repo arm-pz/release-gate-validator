@@ -93,8 +93,8 @@ plainly that no lane was re-run here and name the run dates. Then recommend the 
 - Merge verdicts into a score, or let one lane's pass cover another's absence.
 - Present itself as equivalent to the other two forks. It is the cheapest and the least fresh.
 
-If a `caffeinity-stack` skill is installed, read it before reporting Caffeinity work. Brew 3 · Espresso in `caffeinity-routing` is the sequence
-this skill validates.
+If a `caffeinity-stack` skill is installed, read it before reporting Caffeinity work. Workflow 3 (launch-safely) in `workflow-router` is the
+sequence this skill validates.
 
 ## Verify
 
